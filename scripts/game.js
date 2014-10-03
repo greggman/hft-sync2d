@@ -32,7 +32,71 @@
 "use strict";
 
 requirejs([], function() {
-  window.location.href = "launcher.html";
+  var launch = function(opt) {
+    opt = opt || {};
+
+    var numWindows = 3;
+
+    // use a width so there's at least 1 window left of space.
+    var width  = window.screen.availWidth / (numWindows + 1) | 0;
+    var height = window.screen.availHeight / 3 * 2 | 0;
+
+    var settings = {
+      shared: {
+        fullWidth:  width * numWindows,
+        fullHeight: height,
+        useWindowPosition: opt.useWindowPosition,
+      },
+    };
+
+    var options = {
+      resizeable: 1,
+      scrollbars: 1,
+      menubar: 1,
+      toolbar: 1,
+      location: 1,
+      width: width,
+      height: height,
+    };
+
+    if (opt.useWindowPosition) {
+      settings.shared.fullWidth = window.screen.availWidth;
+      settings.shared.fullHeight = window.screen.availHeight;
+    }
+
+    var middle = numWindows / 2 | 0;
+    var openWindows = function(server) {
+      for (var ii = 0; ii < numWindows; ++ii) {
+        settings.server = ii == middle ? true : undefined;
+        if (!settings.server != !server) {
+          continue;
+        }
+
+        options.left = 10 + window.screen.availLeft + ii * width;
+        options.top  = 10 + window.screen.availTop;
+
+        if (!opt.useWindowPosition) {
+          settings.x = ii * width;
+          settings.y = 0;
+        }
+
+        var url = "sync2d.html?settings=" + JSON.stringify(settings).replace(/"/g, "");
+        var title = "view " + ii;
+        var windowOptions = JSON.stringify(options).replace(/[{}"]/g, "").replace(/\:/g,"=");
+
+        window.open(url, title, windowOptions);
+      }
+    };
+    openWindows(true);  // open the game server first
+    openWindows(false); // open the game clients second
+  };
+
+  var $ = function(id) {
+    return document.getElementById(id);
+  };
+
+  $("button1").addEventListener('click', function() { launch(); }, false);
+  $("button2").addEventListener('click', function() { launch({useWindowPosition: true}); }, false);
 });
 
 
