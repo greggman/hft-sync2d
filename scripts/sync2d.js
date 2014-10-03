@@ -88,7 +88,6 @@ requirejs(
 
   var server;
   server = new GameServer({
-    disconnectPlayersIfGameDisconnects: false,
     allowMultipleGames: true
   });
   server.addEventListener('set', handleSetMsg);
