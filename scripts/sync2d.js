@@ -37,14 +37,12 @@ function $(id) {
 // Start the main app logic.
 requirejs(
   [ 'hft/gameserver',
-    'hft/gameclient',
     'hft/syncedclock',
     'hft/misc/misc',
     'hft/misc/random',
     'hft/misc/ui',
   ], function(
     GameServer,
-    GameClient,
     SyncedClock,
     Misc,
     Random,
@@ -89,14 +87,15 @@ requirejs(
   };
 
   var server;
-  if (globals.server) {
-    server = new GameServer({
-      disconnectPlayersIfGameDisconnects: false,
-    });
-    server.addEventListener('playerconnect', noop);
-    server.addEventListener('connected', noop);
-    server.addEventListener('disconnected', noop);
+  server = new GameServer({
+    disconnectPlayersIfGameDisconnects: false,
+    allowMultipleGames: true
+  });
+  server.addEventListener('set', handleSetMsg);
+  server.addEventListener('connected', noop);
+  server.addEventListener('disconnected', noop);
 
+  if (globals.server) {
     var uiElement = $("ui");
     uiElement.style.display = "block";
 
@@ -107,7 +106,7 @@ requirejs(
 
       UI.addRange(uiElement, label, data, propertyName, min, max, function() {
         // send the data to the server. It will come back on the client. See handleSetMsg
-        server.broadcastCmd('set', data);
+        server.broadcastCmdToGames('set', data);
       });
     };
 
@@ -118,13 +117,8 @@ requirejs(
     addRange("number of balls", "numBalls", 1, 200);
 
     // Send all the shared settings in case we've restarted the server.
-    server.broadcastCmd('set', globals.shared);
+    server.broadcastCmdToGames('set', globals.shared);
   }
-
-  var client = new GameClient({});
-  client.addEventListener('connected', noop);
-  client.addEventListener('disconnected', noop);
-  client.addEventListener('set', handleSetMsg);
 
   var clock = SyncedClock.createClock(true);
 
