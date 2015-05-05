@@ -1,19 +1,18 @@
 {
-  "name": "Sync2D",
+  "dependencies": {},
   "description": "Example of syncing monitors across machines using HappyFunTimes",
-  "version": "0.0.1",
-  "private": false,
-  "dependencies": {
-  },
   "happyFunTimes": {
-    "gameId": "sync2d",
+    "apiVersion": "1.9.0",
     "category": "example",
-    "apiVersion": "1.4.0",
+    "gameId": "sync2d",
     "gameType": "html-example",
     "minPlayers": 0,
     "templateUrls": [
       "phone-launcher.html",
       "sync2d.html"
     ]
-  }
+  },
+  "name": "Sync2D",
+  "private": false,
+  "version": "0.0.1"
 }
