@@ -35,18 +35,16 @@ function $(id) {
 }
 
 // Start the main app logic.
-requirejs(
-  [ 'hft/gameserver',
-    'hft/syncedclock',
-    'hft/misc/misc',
-    'hft/misc/random',
-    'hft/misc/ui',
+requirejs([
+    '../node_modules/happyfuntimes/dist/hft',
+    './misc',
+    './ui',
+    './random',
   ], function(
-    GameServer,
-    SyncedClock,
+    hft,
     Misc,
-    Random,
-    UI) {
+    UI,
+    Random) {
 
   // You can set these from the URL with
   // http://path/gameview.html?settings={name:value,name:value}
@@ -87,7 +85,7 @@ requirejs(
   };
 
   var server;
-  server = new GameServer({
+  server = new hft.GameServer({
     allowMultipleGames: true
   });
   server.addEventListener('set', handleSetMsg);
@@ -119,7 +117,7 @@ requirejs(
     server.broadcastCmdToGames('set', globals.shared);
   }
 
-  var clock = SyncedClock.createClock(true);
+  var clock = hft.SyncedClock.createClock(true);
 
   var canvas = $("c");
   var ctx = canvas.getContext("2d");
